@@ -225,5 +225,5 @@ const apollo = new ApolloServer({
 })
 
 apollo.listen().then(() => {
-  console.log(`🚀 GraphQL service ready at http://localhost:4000/graphql`)
+  console.log(`🚀 GraphQL service ready...`)
 })
