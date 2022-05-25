@@ -2,7 +2,8 @@ import { PrismaClient } from '@prisma/client'
 import { ApolloServer } from 'apollo-server'
 import { extendType, makeSchema, mutationType, nullable, objectType, queryType, stringArg , nonNull } from 'nexus'
 import * as path from 'path'
-import { User, Post } from 'nexus-prisma'
+import { User, Post , Comment } from 'nexus-prisma'
+import { convertNodeHttpToRequest } from 'apollo-server-core'
 
 const prisma = new PrismaClient()
 
@@ -48,7 +49,16 @@ const apollo = new ApolloServer({
         }
       }),
       objectType({
-        name:  'Query',
+        name: Comment.$name,
+        description: Comment.$description,
+        definition(t){
+          t.field(Comment.id),
+          t.field(Comment.content),
+          t.field(Comment.userId)
+        }
+      }),
+      ///  query for users
+      queryType({
         definition(t){
           t.list.field('users', {
             type:"User",
@@ -58,6 +68,7 @@ const apollo = new ApolloServer({
           })
         }
       }),
+      /// query for posts
       extendType({
         type:  'Query',
         definition(t){
@@ -69,8 +80,20 @@ const apollo = new ApolloServer({
           })
         }
       }),
-      objectType({
-        name: 'Mutation',
+      /// query for comments
+      extendType({
+        type:  'Query',
+        definition(t){
+          t.list.field('comments', {
+            type:"Comment",
+            resolve(_root, _args, ctx) {
+              return ctx.prisma.comment.findMany()
+            },
+          })
+        }
+      }),
+      /// create new User
+      mutationType({
         definition(t) {
           t.field('createUser', {
             type: 'User',
@@ -92,6 +115,7 @@ const apollo = new ApolloServer({
           })
         }
       }),
+      /// create new Post
       extendType({
         type: 'Mutation',
         definition(t) {
@@ -111,6 +135,86 @@ const apollo = new ApolloServer({
                  data: newPost
               })
              return returnedPost
+            },
+          })
+        }
+      }),
+      /// create new Comment
+      extendType({
+        type: 'Mutation',
+        definition(t) {
+          t.field('createComment', {
+            type: 'Comment',
+            args: {
+              userId: nonNull(stringArg()),
+              postId: nonNull(stringArg()),
+              content: nonNull(stringArg()),
+            },
+            resolve(_root, _args, ctx) {
+              const newComment = 
+              {
+                postId: _args.postId,
+                userId: _args.userId,
+                content: _args.content,
+              }
+              const returnedComment = ctx.prisma.comment.create({
+                 data: newComment
+              })
+             return returnedComment
+            },
+          })
+        }
+      }),
+      /// updatePost
+      extendType({
+        type: 'Mutation',
+        definition(t) {
+          t.field('updatePost', {
+            type: 'Post',
+            args: {
+              content: nonNull(stringArg()),
+              id: nonNull(stringArg())
+            },
+            resolve(_root, _args, ctx) {
+              const newPost = 
+              {
+                content: _args.content,
+                id: _args.id
+              }
+              const returnedPost = ctx.prisma.post.update({
+                 data: newPost,
+                where: {
+                  id: _args.id
+                }
+              })
+             return returnedPost
+            },
+          })
+        }
+      }),
+      // updateComment
+      extendType({
+        type: 'Mutation',
+        definition(t) {
+          t.field('updateComment', {
+            type: 'Comment',
+            args: {
+              id: nonNull(stringArg()),
+              content: nonNull(stringArg())
+            },
+            resolve(_root, _args, ctx) {
+              const newComment = 
+              {
+                id: _args.id,
+                content: _args.content
+              }
+              const returnedComment = ctx.prisma.comment.update({
+                data:newComment,
+                where:{
+                 id: _args.id
+                }
+              })
+             return returnedComment
             },
           })
         }

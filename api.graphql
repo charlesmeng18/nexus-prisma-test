@@ -2,9 +2,18 @@
 ### Do not make changes to this file directly
 
 
+type Comment {
+  content: String!
+  id: ID!
+  userId: String!
+}
+
 type Mutation {
+  createComment(content: String!, postId: String!, userId: String!): Comment
   createPost(content: String!, userId: String!): Post
   createUser(email: String!, name: String!): User
+  updateComment(content: String!, id: String!): Comment
+  updatePost(content: String!, id: String!): Post
 }
 
 """This is our posts model"""
@@ -15,6 +24,7 @@ type Post {
 }
 
 type Query {
+  comments: [Comment]
   posts: [Post]
   users: [User]
 }
