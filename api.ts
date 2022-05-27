@@ -8,6 +8,7 @@ import { convertNodeHttpToRequest } from 'apollo-server-core'
 const prisma = new PrismaClient()
 
 const PORT = process.env.PORT || 4000;
+console.log(process.env.NEXUS_SHOULD_EXIT_AFTER_REFLECTION)
 
 const apollo = new ApolloServer({
   context: () => ({ prisma }),
