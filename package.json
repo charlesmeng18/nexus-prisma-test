@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "yarn run generate && yarn build:reflection && tsc",
+    "build": "yarn run generate && yarn build:reflection && tsc && yarn run copy-context",
+    "copy-context":"cp context.ts build/",
     "generate":"prisma generate",
     "build:reflection": "NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node api",
     "dev": "ts-node-dev --transpile-only api",

@@ -7,6 +7,8 @@ import { convertNodeHttpToRequest } from 'apollo-server-core'
 
 const prisma = new PrismaClient()
 
+const PORT = process.env.PORT || 4000;
+
 const apollo = new ApolloServer({
   context: () => ({ prisma }),
   cors: true,
@@ -224,6 +226,8 @@ const apollo = new ApolloServer({
   }),
 })
 
-apollo.listen().then(() => {
-  console.log(`🚀 GraphQL service ready...`)
+apollo.listen({
+  port: PORT
+}).then(({ port}) => {
+  console.log(`🚀 GraphQL service ready... ${port}`)
 })
