@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn build:reflection && tsc",
+    "generate":"prisma generate",
     "build:reflection": "NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node api",
     "dev": "ts-node-dev --transpile-only api",
     "dev:migrate": "prisma migrate save --experimental -c &&ec prisma migrate up --experimental -c",
