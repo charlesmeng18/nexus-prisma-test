@@ -1,1 +1,1 @@
-web: node build/api.js
+web: yarn run generate && yarn run build:reflection && node build/api.js
